@@ -60,8 +60,28 @@ export const resolvers = {
           notes: [...notes,newNote]
         }
       });
-      console.log([...notes,newNote]);
-        return newNote;
-      }
+      return newNote;
+    },
+    editNote: (_, {id, title, content}, {cache}) =>{
+        const noteId = cache.config.dataIdFromObject({
+          __typename: "Note",
+          id: id
+        });
+        const note = cache.readFragment({ fragment: NOTE_FRAGMENT, id:noteId });
+
+        const updateNote = {
+            ...note,
+            title,
+            content
+        }
+        cache.writeFragment({
+            id:noteId,
+            fragment:NOTE_FRAGMENT,
+            data:updateNote
+        })
+
+        console.log(updateNote);
+        return updateNote;
+    }
   }
 };
